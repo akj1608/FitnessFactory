@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c1f1a" />
+    <meta name="description" content="Abhishek Fit Reset — beginner diet, training, and daily schedule" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Fit Reset" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <title>Fit Reset · Abhishek</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true"></div>
+    <div class="app">
+      <header class="top">
+        <div>
+          <p class="brand">Fit Reset</p>
+          <h1 id="greeting">Day 1</h1>
+          <p class="sub" id="profile-line">5′5″ · 80 kg · BMI 29.4 · sugar + liver rescue</p>
+        </div>
+        <div class="score-ring" id="score-ring" title="Today's adherence">
+          <span id="score-value">0</span>
+          <small>score</small>
+        </div>
+      </header>
+
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="today" type="button">Today</button>
+        <button class="tab" data-tab="exercises" type="button">Exercises</button>
+        <button class="tab" data-tab="plan" type="button">Plan</button>
+        <button class="tab" data-tab="history" type="button">More</button>
+      </nav>
+
+      <main>
+        <section id="panel-today" class="panel active">
+          <div class="card next-card">
+            <p class="eyebrow">Right now · Asia/Calcutta</p>
+            <h2 id="next-action-title">Loading…</h2>
+            <p class="muted" id="next-action-detail"></p>
+            <button type="button" class="btn ghost" id="enable-reminders">
+              Enable phone reminders (while app is open)
+            </button>
+            <p class="hint" id="reminder-status"></p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h2>Today’s timetable</h2>
+              <p>Tap a row when done</p>
+            </div>
+            <div class="timeline" id="timeline"></div>
+          </div>
+
+          <div class="card water-card">
+            <div class="card-head">
+              <h2>Water</h2>
+              <p><span id="water-count">0</span> / 12 glasses · ~3 L</p>
+            </div>
+            <div class="water-track" id="water-track" aria-label="Water progress"></div>
+            <div class="row-actions">
+              <button type="button" class="btn ghost" id="water-minus">−1</button>
+              <button type="button" class="btn primary" id="water-plus">+1 glass</button>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <label class="field">
+              <span>Fasting sugar (mg/dl)</span>
+              <input id="fasting-sugar" type="number" inputmode="decimal" placeholder="e.g. 140" />
+              <small id="sugar-hint" class="hint"></small>
+            </label>
+            <label class="field">
+              <span>Morning weight (kg)</span>
+              <input id="weight" type="number" inputmode="decimal" step="0.1" placeholder="80.0" />
+              <small class="hint">Month target 74–76 kg</small>
+            </label>
+          </div>
+
+          <div class="checks" id="checks">
+            <label class="check"><input type="checkbox" data-key="walked" /> Main walk 45–60 min done</label>
+            <label class="check"><input type="checkbox" data-key="afterMealWalk" /> Walked after meals</label>
+            <label class="check"><input type="checkbox" data-key="strength" /> Strength day done</label>
+            <label class="check"><input type="checkbox" data-key="dietStrict" /> Ate only from “KEEP” list</label>
+            <label class="check"><input type="checkbox" data-key="alcoholFree" checked /> No alcohol</label>
+            <label class="check"><input type="checkbox" data-key="sugarFree" checked /> No sugar / sweets / juice</label>
+            <label class="check"><input type="checkbox" data-key="earlyDinner" /> Dinner finished by 8 pm</label>
+            <label class="check"><input type="checkbox" data-key="sleepOk" /> Sleep 7+ hours</label>
+            <label class="check"><input type="checkbox" data-key="omegaTaken" /> Omega-3 with lunch</label>
+          </div>
+
+          <label class="field">
+            <span>Notes</span>
+            <textarea id="notes" rows="3" placeholder="What you ate, how you felt…"></textarea>
+          </label>
+
+          <p class="saved" id="saved-msg" hidden>Saved on this device</p>
+        </section>
+
+        <section id="panel-exercises" class="panel">
+          <div class="callout info-callout">
+            <strong>Exercise Studio · total beginner.</strong> Watch the short video, read the steps,
+            then try 1 easy set. Stop for chest pain, fainting, or severe dizziness — call a doctor.
+            Videos are third-party YouTube demos for form (not medical advice).
+          </div>
+
+          <article class="card session-card" id="session-card"></article>
+
+          <div class="ex-nav" id="ex-nav"></div>
+          <div class="ex-list" id="ex-list"></div>
+        </section>
+
+        <section id="panel-plan" class="panel">
+          <nav class="subtabs" id="plan-subtabs">
+            <button type="button" class="subtab active" data-plan="foods">Foods</button>
+            <button type="button" class="subtab" data-plan="day">Day plan</button>
+            <button type="button" class="subtab" data-plan="stack">Pills</button>
+            <button type="button" class="subtab" data-plan="labs">Labs</button>
+          </nav>
+
+          <div id="plan-foods" class="plan-block active">
+            <div class="callout info-callout">
+              <strong>Beginner rule:</strong> If you did not cook it simply, and it is sweet, fried,
+              bakery, or packaged — skip it. When confused, eat eggs + sabzi + salad.
+            </div>
+
+            <article class="card">
+              <h2>Vegetables — KEEP (eat freely)</h2>
+              <p class="muted">These barely raise sugar. Fill half your plate.</p>
+              <ul class="list good">
+                <li>Palak, methi leaves, lauki, tinda, tori, bhindi</li>
+                <li>Cabbage, cauliflower, broccoli, beans, cluster beans</li>
+                <li>Cucumber, tomato, onion, capsicum, lettuce, zucchini</li>
+                <li>Karela, bottle gourd, ridge gourd, mushroom</li>
+                <li>Salad before lunch and dinner every day</li>
+              </ul>
+            </article>
+
+            <article class="card">
+              <h2>Vegetables — LIMIT or AVOID</h2>
+              <p class="muted">Not “poison” — they act more like rice/roti for your sugar.</p>
+              <ul class="list danger">
+                <li><strong>Avoid fried:</strong> aloo bhujia, fries, pakora, samosa stuffing</li>
+                <li><strong>Limit potato / arbi / sweet potato</strong> — max 2–3 small pieces, 1–2×/week, never fried</li>
+                <li><strong>Limit corn, beetroot, green peas</strong> — small side only</li>
+                <li><strong>Avoid:</strong> canned veggies in sweet sauce, ketchup-heavy mixes</li>
+                <li><strong>Avoid vegetable juice</strong> (even carrot/beet) — sugar without fibre</li>
+              </ul>
+            </article>
+
+            <article class="card">
+              <h2>Black coffee — YES</h2>
+              <ul class="list good">
+                <li><strong>Black coffee without sugar is OK</strong> — 1–2 cups/day</li>
+                <li>Can help alertness; may slightly support metabolism</li>
+                <li>No sugar, no honey, no flavoured syrup, no creamers</li>
+                <li>If empty stomach gives acidity — drink after breakfast</li>
+                <li>Stop after 4 pm if it hurts sleep</li>
+              </ul>
+            </article>
+
+            <article class="card">
+              <h2>Milk, curd, dairy</h2>
+              <ul class="list">
+                <li>
+                  <strong>Curd / plain dahi — KEEP</strong>
+                  <span class="tag good">best dairy</span>
+                  100–150 g unsweetened with lunch
+                </li>
+                <li>
+                  <strong>Chaas / buttermilk — KEEP</strong> (no sugar, light salt OK)
+                </li>
+                <li>
+                  <strong>Paneer — KEEP</strong> 80–100 g; grilled/bhurji, not deep fried
+                </li>
+                <li>
+                  <strong>Milk — LIMIT</strong> ½–1 cup toned/double-toned if you need tea base;
+                  no full-cream litres; no sweet milkshakes
+                </li>
+                <li>
+                  <strong>AVOID</strong> flavoured yogurt, sweet lassi, condensed milk, ice cream,
+                  cheese burst, cream gravies
+                </li>
+              </ul>
+            </article>
+
+            <article class="card">
+              <h2>KEEP eating (simple shopping list)</h2>
+              <ul class="list good">
+                <li>Eggs, chicken, fish, dal, chana, sprouts, paneer</li>
+                <li>Jowar / bajra / ragi flour · oats</li>
+                <li>All “KEEP” vegetables above · salad items</li>
+                <li>Plain curd · buttermilk · almonds (6–8) · flax/chia</li>
+                <li>Lemon, cinnamon, methi seeds, karela</li>
+                <li>Black coffee / green tea / lemon water — no sugar</li>
+              </ul>
+            </article>
+
+            <article class="card">
+              <h2>STOP eating</h2>
+              <ul class="list danger">
+                <li>Sugar, sweets, biscuits, bakery, bread, maida, Maggi</li>
+                <li>White rice, biryani, fried rice (14-day ban)</li>
+                <li>Soft drinks, packaged juice, sweet tea</li>
+                <li>Alcohol · deep fried · chips · namkeen</li>
+                <li>Banana, mango, grapes, chikoo, dried fruit</li>
+              </ul>
+            </article>
+          </div>
+
+          <div id="plan-day" class="plan-block">
+            <article class="card">
+              <h2>Exact day (copy this)</h2>
+              <ol class="list numbered">
+                <li><strong>6:30</strong> — Wake · 500 ml water · weigh · check fasting sugar</li>
+                <li><strong>7:00</strong> — 1 glass water</li>
+                <li><strong>8:00</strong> — Breakfast (eggs/chilla/oats) · black coffee OK</li>
+                <li><strong>8:20</strong> — Walk 10–15 min</li>
+                <li><strong>10:30</strong> — Water · cucumber or buttermilk</li>
+                <li><strong>1:00</strong> — Lunch (salad first · dal/chicken · 2 millet roti · curd) · omega-3</li>
+                <li><strong>1:20</strong> — Walk 10–15 min</li>
+                <li><strong>3:30</strong> — Water</li>
+                <li><strong>5:00</strong> — Sprouts/chana · water · (Mon/Wed/Fri: strength now)</li>
+                <li><strong>6:00</strong> — Main brisk walk 45–60 min</li>
+                <li><strong>7:15</strong> — Dinner: protein + sabzi/salad only · no roti/rice</li>
+                <li><strong>7:35</strong> — Walk 10–15 min</li>
+                <li><strong>8:30</strong> — Magnesium · no more food · water if thirsty</li>
+                <li><strong>10:30</strong> — Sleep</li>
+              </ol>
+            </article>
+          </div>
+
+          <div id="plan-stack" class="plan-block">
+            <article class="card">
+              <h2>Take</h2>
+              <ul class="list good">
+                <li>Magnesium glycinate — night</li>
+                <li>Tata 1mg Triple Omega-3 — 1 with lunch</li>
+                <li>Simple multivitamin — OK</li>
+                <li>Black coffee — 1–2, no sugar</li>
+              </ul>
+            </article>
+            <article class="card">
+              <h2>Pause</h2>
+              <ul class="list danger">
+                <li>Ashwagandha · glutathione</li>
+                <li>Kapiva liver juice — only if doctor says yes</li>
+                <li>Collagen — optional, not for sugar/liver</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+          <div id="plan-labs" class="plan-block">
+            <div class="callout danger">
+              <strong>Critical:</strong> HbA1c 6.8% + fasting 167.8 + urine sugar 1+ = diabetes-range.
+              ALT 136 + GGT 153 = fatty liver pattern. See a doctor this week.
+            </div>
+            <div class="labs" id="labs-list"></div>
+            <article class="card">
+              <h2>Ideal target</h2>
+              <p class="muted">
+                At 5′5″, fit range is roughly <strong>63–68 kg</strong>.
+                Month 1: <strong>74–76 kg</strong>, fasting sugar under 126.
+                Re-test sugar + LFT day 30; HbA1c ~day 90.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section id="panel-history" class="panel">
+          <div class="stats-row">
+            <div class="mini-stat"><span id="hist-days">0</span><small>days logged</small></div>
+            <div class="mini-stat"><span id="hist-avg">0%</span><small>avg score</small></div>
+            <div class="mini-stat"><span id="hist-water">0</span><small>avg glasses</small></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Date</th>
+                  <th>Water</th>
+                  <th>Sugar</th>
+                  <th>Kg</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody id="history-body"></tbody>
+            </table>
+          </div>
+          <button type="button" class="btn ghost danger-text" id="reset-today">Clear today’s log</button>
+        </section>
+      </main>
+
+      <footer class="foot">
+        Coach tool for Abhishek · not medical advice · local-only data · times Asia/Calcutta
+      </footer>
+    </div>
+    <script src="exercises.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
