@@ -1,0 +1,27 @@
+{
+  "name": "fit-reset",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "env -u DATABASE_URL next dev -p 3000",
+    "build": "env -u DATABASE_URL next build && node scripts/migrate.mjs",
+    "start": "next start -p ${PORT:-3000}",
+    "migrate": "node scripts/migrate.mjs"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.2.17",
+    "bcryptjs": "^2.4.3",
+    "next": "^15.1.0",
+    "pg": "^8.13.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.0",
+    "@types/pg": "^8.11.10",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.2"
+  }
+}

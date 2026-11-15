@@ -1,21 +1,25 @@
 # Fit Reset
 
-Personal metabolic coach and daily tracker for Abhishek (diet, exercise studio, labs, timetable).
+Generic multi-user fitness coaching app.
 
-## Live app
+- Anyone can register with email/password
+- Google / Apple sign-in only with verified identity tokens (when client IDs are bound)
+- Host profile username `abhishek` is seeded when `HOST_PASSWORD` is set
+- Personalization, daily habit log, exercise studio, AI coach
+- Postgres when `DATABASE_URL` is set; local PGlite fallback for development
+- Optional `OPENAI_API_KEY` for model-backed advice (rule-based coach otherwise)
+- Coach and registration are rate-limited
 
-https://fit-reset.apps.grok.bot
-
-## Run locally
+## Scripts
 
 ```bash
-python3 -m http.server 8765 --bind 127.0.0.1
+npm install
+npm run dev
 ```
 
-Open http://127.0.0.1:8765
+## Secrets (Cursor app)
 
-Not medical advice. Data stays in the browser (`localStorage`).
-
-## Note
-
-Old FitnessFactory React project is preserved on branch `archive/fitness-factory-2023`.
+- `SESSION_SECRET` (required in production)
+- `HOST_PASSWORD` (optional; seeds Abhishek host login)
+- `OPENAI_API_KEY` (optional)
+- `GOOGLE_CLIENT_ID` / `APPLE_CLIENT_ID` (optional, verified OAuth only)
