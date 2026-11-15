@@ -1,0 +1,9 @@
+{
+  "name": "Fit Reset",
+  "short_name": "Fit Reset",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1a14",
+  "theme_color": "#0f1a14",
+  "description": "Personalized fitness coaching for everyone"
+}
