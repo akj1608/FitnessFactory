@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, Suspense, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import { Nav } from "@/components/Nav";
 
 function LoginForm() {
@@ -17,6 +17,16 @@ function LoginForm() {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [providers, setProviders] = useState({ google: false, apple: false });
+
+  useEffect(() => {
+    fetch("/api/auth/oauth")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.providers) setProviders(data.providers);
+      })
+      .catch(() => undefined);
+  }, []);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -27,9 +37,7 @@ function LoginForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
-          mode === "login"
-            ? { identifier, password }
-            : { email, password, displayName },
+          mode === "login" ? { identifier, password } : { email, password, displayName },
         ),
       });
       const data = await res.json();
@@ -46,35 +54,6 @@ function LoginForm() {
     }
   }
 
-  async function oauth(provider: "google" | "apple" | "fitness") {
-    setBusy(true);
-    setError("");
-    try {
-      const subject = `${provider}-${crypto.randomUUID()}`;
-      const res = await fetch("/api/auth/oauth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          provider,
-          subject,
-          email: `${provider}.user@fitreset.app`,
-          displayName: provider === "fitness" ? "Fitness Member" : `${provider[0].toUpperCase()}${provider.slice(1)} Member`,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Provider sign-in failed");
-        return;
-      }
-      router.push("/onboarding");
-      router.refresh();
-    } catch {
-      setError("Provider sign-in failed");
-    } finally {
-      setBusy(false);
-    }
-  }
-
   return (
     <div className="grid-2">
       <section className="panel">
@@ -82,15 +61,19 @@ function LoginForm() {
           {mode === "login" ? "Welcome back" : "Create your Fit Reset"}
         </h2>
         <p className="muted" style={{ marginTop: 0 }}>
-          Anyone can register with email and password. Host profile username:{" "}
-          <strong>abhishek</strong>.
+          Anyone can register with email and password. Host username: <strong>abhishek</strong>{" "}
+          (when host password secret is set).
         </p>
         <form onSubmit={onSubmit}>
           {mode === "register" ? (
             <>
               <div className="field">
                 <label>Display name</label>
-                <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Your name" />
+                <input
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="Your name"
+                />
               </div>
               <div className="field">
                 <label>Email</label>
@@ -153,21 +136,20 @@ function LoginForm() {
         <h2 style={{ fontFamily: "var(--font-display)", marginTop: 0, fontSize: "1.35rem" }}>
           Continue with
         </h2>
-        <p className="muted">Google, Apple, or Fitness identity — personalize after sign-in.</p>
+        <p className="muted">
+          Google and Apple require verified identity tokens. Email/password always works.
+        </p>
         <div className="provider-row">
-          <button type="button" className="btn btn-soft" disabled={busy} onClick={() => oauth("google")}>
-            Continue with Google
+          <button type="button" className="btn btn-soft" disabled title="Needs verified Google id_token">
+            {providers.google ? "Google ready (use official Google Sign-In)" : "Google (not configured)"}
           </button>
-          <button type="button" className="btn btn-soft" disabled={busy} onClick={() => oauth("apple")}>
-            Continue with Apple
-          </button>
-          <button type="button" className="btn btn-soft" disabled={busy} onClick={() => oauth("fitness")}>
-            Continue with Fitness
+          <button type="button" className="btn btn-soft" disabled title="Needs verified Apple identity token">
+            {providers.apple ? "Apple ready (use official Apple Sign-In)" : "Apple (not configured)"}
           </button>
         </div>
         <p className="muted" style={{ fontSize: "0.85rem", marginTop: "1rem" }}>
-          Bind <code>GOOGLE_CLIENT_ID</code> / <code>APPLE_CLIENT_ID</code> secrets for full OAuth
-          verification. Until then, provider buttons create a personalized guest profile.
+          Provider buttons stay disabled until the app verifies a real Google or Apple token server-side.
+          Use email registration meanwhile.
         </p>
         <p style={{ marginTop: "1.25rem" }}>
           <Link href="/" className="muted">

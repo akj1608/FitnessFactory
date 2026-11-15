@@ -112,6 +112,7 @@ export default function CoachPage() {
                 padding: "0.75rem 1rem",
               }}
               value={input}
+              maxLength={800}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask for fitness advice…"
             />

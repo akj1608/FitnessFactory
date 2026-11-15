@@ -1,8 +1,17 @@
 import { NextResponse } from "next/server";
 import { registerPasswordUser, setSessionCookie } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { allowRequest } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
+  if (!allowRequest(`register:${ip}`, 10, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: "Too many registrations. Try later." }, { status: 429 });
+  }
+
   const body = (await req.json().catch(() => ({}))) as {
     email?: string;
     password?: string;

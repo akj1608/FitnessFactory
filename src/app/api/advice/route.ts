@@ -3,6 +3,10 @@ import { currentUser } from "@/lib/auth";
 import { aiAdvice } from "@/lib/coach";
 import { newId, sql } from "@/lib/db";
 import { getProfile } from "@/lib/profile";
+import { allowRequest } from "@/lib/rate-limit";
+
+const MAX_MESSAGE_CHARS = 800;
+const ADVICE_LIMIT_PER_HOUR = 20;
 
 export async function GET() {
   const user = await currentUser();
@@ -18,9 +22,23 @@ export async function GET() {
 export async function POST(req: Request) {
   const user = await currentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (!allowRequest(`advice:${user.id}`, ADVICE_LIMIT_PER_HOUR, 60 * 60 * 1000)) {
+    return NextResponse.json(
+      { error: "Coach rate limit reached. Try again in an hour." },
+      { status: 429 },
+    );
+  }
+
   const body = (await req.json().catch(() => ({}))) as { message?: string };
-  const message = body.message?.trim();
+  const message = body.message?.trim() ?? "";
   if (!message) return NextResponse.json({ error: "Message required" }, { status: 400 });
+  if (message.length > MAX_MESSAGE_CHARS) {
+    return NextResponse.json(
+      { error: `Message too long (max ${MAX_MESSAGE_CHARS} characters)` },
+      { status: 400 },
+    );
+  }
 
   const profile = await getProfile(user.id);
   const history = await sql<{ role: "user" | "assistant"; content: string }>(
